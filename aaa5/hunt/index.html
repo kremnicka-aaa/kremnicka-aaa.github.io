@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#07101F"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<title>President Hunt</title>
+<meta name="description" content="AAA 5 game: walk around, find the Presidents of the United States, answer the question, take the perfect photo and complete your album.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Anton&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="hunt.css">
+</head><body>
+<div id="app">
+  <canvas id="map"></canvas>
+  <div id="hud" class="hide">
+    <button class="pill" id="back">◀ Menu</button>
+    <div class="pill" id="count">0 / 45</div>
+    <button class="pill" id="albumBtn">Album</button>
+  </div>
+  <div id="status" class="hide"></div>
+  <div id="pad" class="hide">Drag on the map to walk · or use the arrow keys</div>
+  <div id="ov"></div>
+</div>
+<script src="../../assets/lib/aaa-kit.js"></script>
+<script src="presidents.js"></script><script src="credits.js"></script>
+<script src="hunt.js"></script>
+</body></html>

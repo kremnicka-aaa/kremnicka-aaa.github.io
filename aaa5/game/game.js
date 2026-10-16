@@ -38,61 +38,64 @@
     { t: 'Campaign mistake', p: 'Your candidate forgets the name of a state capital on live TV. You lose $1M.', why: 'Every word a candidate says can be filmed and shared within minutes.', fx: { money: -1 } }
   ];
 
-  let G = null;
 
+  const S = window.KIT ? KIT.SND : { init() { }, click() { }, good() { }, bad() { }, coin() { }, win() { }, horn() { }, tone() { } };
+  const TEAMC = ['#E5383B', '#2F7DEB', '#22B07D', '#F2A516'];
+  let G = null, sel = null;
+
+  // ---------- set-up ----------
   function setup() {
-    const units = D.units.map(u => u.n);
-    const cfg = { n: 2, names: DEF_NAMES.slice(), rounds: 8, units: new Set(units) };
+    const cfg = { n: 2, names: DEF_NAMES.slice(), rounds: 8, units: new Set(D.units.map(u => u.n)) };
     const draw = () => {
-      app.innerHTML = `<div class="hero"><div class="kick">AAA 5 · class game</div><h1>Race to 270</h1><p>You are campaign teams in an American presidential election. Answer questions from AAA 5 to raise money, spend it on campaigning in the states and win their electoral votes. The first team to reach <b>270 electoral votes</b> wins – or the team with the most votes when time runs out.</p></div>
-      <div class="setup">
-        <div class="panel"><h3>Set up the game</h3>
-          <div class="field"><label>Teams</label><div class="seg" id="nt">${[1, 2, 3, 4].map(k => `<button data-k="${k}" class="${cfg.n === k ? 'on' : ''}">${k === 1 ? '1 (vs computer)' : k}</button>`).join('')}</div></div>
-          ${Array.from({ length: Math.max(cfg.n, 1) }, (_, i) => `<div class="field"><label><span class="chip" style="background:${COLORS[i]}"></span> Team ${i + 1}</label><input type="text" data-i="${i}" value="${md(cfg.names[i])}" maxlength="20"></div>`).join('')}
-          <div class="field"><label>Rounds</label><div class="seg" id="nr">${[6, 8, 10, 12].map(k => `<button data-k="${k}" class="${cfg.rounds === k ? 'on' : ''}">${k}</button>`).join('')}</div></div>
-          <div class="field"><label>Units</label><div class="seg" id="nu">${D.units.map(u => `<button data-k="${u.n}" class="${cfg.units.has(u.n) ? 'on' : ''}" title="${md(u.name)}">${u.n}</button>`).join('')}</div></div>
-          <p class="small">One round = one turn for every team. 8 rounds take about 30–35 minutes with two teams.</p>
-          <div class="row"><button class="btn" id="go">Start the campaign</button></div>
+      app.innerHTML = `<section class="studio">
+        <div class="onair"><i></i> Live · Election special</div>
+        <h1 class="logo">Race to <span>270</span></h1>
+        <p class="sub">You run the campaign of a presidential candidate. Win the states, collect electoral votes and be the first to reach <b>270 of 538</b>.</p>
+        <div class="how">
+          <div class="step"><b>1</b><h4>Breaking news</h4><p>Every turn starts with a campaign event – money, free rallies, a scandal…</p></div>
+          <div class="step"><b>2</b><h4>The debate</h4><p>Answer a question from AAA 5. Right answer = <strong>$5M</strong> (a streak of 3 = $6M). Wrong = $2M.</p></div>
+          <div class="step"><b>3</b><h4>On the trail</h4><p>Spend $1M for one rally in a state. Enough rallies <i>and</i> more than every rival = the state is yours.</p></div>
+          <div class="step"><b>4</b><h4>Winner takes all</h4><p>The team that wins a state gets <i>all</i> its electoral votes. Rivals can take a state back!</p></div>
         </div>
-        <div class="panel"><h3>How to play</h3><ol>
-          <li><b>Event.</b> Each turn starts with a campaign event: good news, bad news or a chance.</li>
-          <li><b>Question.</b> Answer a question from AAA 5. Correct: <b>$5M</b> (+$1M for a streak of three). Wrong: only $2M.</li>
-          <li><b>Campaign.</b> Click a state to put $1M = 1 influence point there. You can spread your money or save it.</li>
-          <li><b>Win states.</b> Small states (3–5 votes) need 1 point, then 2, 3, 4 – California and Texas need 5. You win a state when you have enough points <i>and</i> more than every other team. Others can take it from you!</li>
-          <li><b>Winner takes all.</b> The team that wins a state gets all its electoral votes – as in 48 real states and D.C.</li>
-        </ol>
-        <h3 style="margin-top:14px">Strategy tip</h3><p>Big states are worth a lot but are expensive and easy to attack. Small states are cheap. Do you defend, attack or save?</p></div>
-      </div>`;
+        <div class="cfg">
+          <div class="row3"><span class="lab">Teams</span><div class="seg" id="nt">${[1, 2, 3, 4].map(k => `<button data-k="${k}" class="${cfg.n === k ? 'on' : ''}">${k === 1 ? '1 vs computer' : k}</button>`).join('')}</div></div>
+          <div class="names">${Array.from({ length: cfg.n }, (_, i) => `<label style="--c:${TEAMC[i]}"><i></i><input type="text" data-i="${i}" value="${md(cfg.names[i])}" maxlength="18"></label>`).join('')}</div>
+          <div class="row3"><span class="lab">Rounds</span><div class="seg" id="nr">${[6, 8, 10, 12].map(k => `<button data-k="${k}" class="${cfg.rounds === k ? 'on' : ''}">${k}</button>`).join('')}</div></div>
+          <div class="row3"><span class="lab">Units</span><div class="seg" id="nu">${D.units.map(u => `<button data-k="${u.n}" class="${cfg.units.has(u.n) ? 'on' : ''}" title="${md(u.name)}">${u.n}</button>`).join('')}</div></div>
+          <p class="note">Small states (3–5 votes) need 1 rally · 6–10 votes: 2 · 11–19: 3 · 20–30: 4 · California and Texas: 5. One round = one turn for every team; 8 rounds ≈ 30 minutes.</p>
+          <button class="go" id="go">Start the campaign ▸</button>
+        </div></section>`;
       app.querySelectorAll('#nt button').forEach(b => b.onclick = () => { save(); cfg.n = +b.dataset.k; draw(); });
       app.querySelectorAll('#nr button').forEach(b => b.onclick = () => { save(); cfg.rounds = +b.dataset.k; draw(); });
       app.querySelectorAll('#nu button').forEach(b => b.onclick = () => { save(); const k = +b.dataset.k; if (cfg.units.has(k)) { if (cfg.units.size > 1) cfg.units.delete(k); } else cfg.units.add(k); draw(); });
-      app.querySelector('#go').onclick = () => { save(); start(cfg); };
+      app.querySelector('#go').onclick = () => { save(); S.init(); S.horn(); start(cfg); };
     };
     const save = () => app.querySelectorAll('input[data-i]').forEach(i => cfg.names[+i.dataset.i] = i.value.trim() || DEF_NAMES[+i.dataset.i]);
     draw();
   }
-
   function start(cfg) {
     const teams = [];
-    for (let i = 0; i < cfg.n; i++) teams.push({ name: cfg.names[i], color: COLORS[i], money: 0, streak: 0, cpu: false });
-    if (cfg.n === 1) teams.push({ name: 'Computer', color: COLORS[1], money: 0, streak: 0, cpu: true });
+    for (let i = 0; i < cfg.n; i++) teams.push({ name: cfg.names[i], color: TEAMC[i], money: 0, streak: 0, cpu: false });
+    if (cfg.n === 1) teams.push({ name: 'Computer', color: TEAMC[1], money: 0, streak: 0, cpu: true });
     const pool = D.units.filter(u => cfg.units.has(u.n)).flatMap(u => u.q.map(q => Object.assign({ unit: u.n }, q)));
-    G = { teams, rounds: cfg.rounds, round: 1, cur: 0, infl: Object.fromEntries(STATES.map(s => [s[0], teams.map(() => 0)])), pool, deck: [], qdeck: [], log: '', units: cfg.units };
-    turnStart();
+    G = { teams, rounds: cfg.rounds, round: 1, cur: 0, infl: Object.fromEntries(STATES.map(s => [s[0], teams.map(() => 0)])), pool, deck: [], qdeck: [], ticker: ['Polls are open in all 50 states and D.C.', 'A candidate needs 270 of the 538 electoral votes to win.'] };
+    sel = null; turnStart();
   }
 
   const owner = c => { const v = G.infl[c]; let best = -1, bi = -1, second = -1; v.forEach((x, i) => { if (x > best) { second = best; best = x; bi = i; } else if (x > second) second = x; }); return best >= THR(c) && best > second ? bi : -1; };
+  const leader = c => { const v = G.infl[c], m = Math.max(...v); return m > 0 && v.filter(x => x === m).length === 1 ? v.indexOf(m) : -1; };
   const evOf = i => STATES.reduce((n, s) => n + (owner(s[0]) === i ? s[2] : 0), 0);
   const nextQ = () => { if (!G.qdeck.length) G.qdeck = shuffle(G.pool); const q = G.qdeck.pop(); const idx = shuffle([0, 1, 2, 3]); return Object.assign({}, q, { o: idx.map(i => q.o[i]), a: idx.indexOf(q.a) }); };
   const nextE = () => { if (!G.deck.length) G.deck = shuffle(EVENTS); return G.deck.pop(); };
+  const need = c => { const v = G.infl[c], i = G.cur, other = Math.max(0, ...v.filter((_, k) => k !== i)); return Math.max(THR(c) - v[i], other + 1 - v[i], 1); };
+  const say = t => { G.ticker.unshift(t); G.ticker = G.ticker.slice(0, 8); };
 
   function turnStart() {
     const T = G.teams[G.cur];
     G.turn = { ev: nextE(), free: 0, only: null, placed: [], phase: 'event', bonus: 0 };
     if (T.cpu) return cpuTurn();
-    render();
+    render(); S.tone(880, .12, 'square', .05); S.tone(660, .2, 'square', .05, .12);
   }
-
   function applyEvent(T) {
     const fx = G.turn.ev.fx, i = G.cur;
     if (fx.money) T.money = Math.max(0, T.money + fx.money);
@@ -101,84 +104,109 @@
     if (fx.lose) { let best = null; STATES.forEach(s => { const v = G.infl[s[0]][i]; if (v > 0 && (!best || EV[s[0]] * 100 + v > EV[best] * 100 + G.infl[best][i])) best = s[0]; }); if (best) { G.infl[best][i]--; G.turn.lost = best; } }
   }
 
-  function mapHTML(clickable) {
-    const tiles = Array(96).fill('<div></div>');
+  // ---------- hex map ----------
+  function mapSVG(clickable) {
+    const R = 30, w = Math.sqrt(3) * R, h = 1.5 * R, pts = [...Array(6)].map((_, k) => { const a = Math.PI / 180 * (60 * k - 30); return [R * Math.cos(a), R * Math.sin(a)]; });
+    const poly = pts.map(p => p.map(v => v.toFixed(1)).join(',')).join(' ');
+    let out = `<svg class="hex" viewBox="${-w * .6} ${-R * 1.1} ${12.6 * w} ${7 * h + R * 2.3}" role="img" aria-label="Map of the United States">`;
     STATES.forEach(([c, n, e, col, row]) => {
-      const o = owner(c), v = G.infl[c];
+      const x = col * w + (row % 2 ? w / 2 : 0), y = row * h, o = owner(c), l = leader(c), v = G.infl[c];
       const allowed = clickable && (G.turn.free > 0 && (!G.turn.only || G.turn.only.includes(c)) || G.teams[G.cur].money > 0);
-      tiles[row * 12 + col] = `<button class="st ${o >= 0 ? 'own' : ''}" data-c="${c}" ${allowed ? '' : 'disabled'} style="${o >= 0 ? `background:${G.teams[o].color}` : ''}${G.turn.only && G.turn.only.includes(c) && G.turn.free > 0 ? ';border-color:var(--gold);border-width:3px' : ''}" title="${n}: ${e} electoral votes · needs ${THR(c)} point${THR(c) > 1 ? 's' : ''}${v.some(x => x) ? ' · influence: ' + G.teams.map((t, i) => t.name + ' ' + v[i]).join(', ') : ''}"><b>${c}</b><small>${e}</small><span class="dots">${v.map((x, i) => x ? `<i style="background:${G.teams[i].color};${o === i ? 'box-shadow:0 0 0 1px #fff' : ''}">${x}</i>` : '').join('')}</span></button>`;
+      const fill = o >= 0 ? G.teams[o].color : l >= 0 ? G.teams[l].color : '#22314F';
+      const hl = G.turn && G.turn.only && G.turn.free > 0 && G.turn.only.includes(c);
+      out += `<g class="h ${o >= 0 ? 'own' : l >= 0 ? 'lean' : ''} ${sel === c ? 'sel' : ''} ${allowed ? 'can' : ''} ${hl ? 'hl' : ''}" data-c="${c}" transform="translate(${x.toFixed(1)},${y.toFixed(1)})" tabindex="${allowed ? 0 : -1}">
+        <title>${n}: ${e} electoral votes</title>
+        <polygon points="${poly}" style="fill:${fill}" />
+        <text class="ev" y="2">${e}</text><text class="cd" y="15">${c}</text>
+        <g class="pips">${v.map((x, k) => x ? `<circle cx="${(k - (v.length - 1) / 2) * 9}" cy="-17" r="${3 + Math.min(x, 5) * .5}" style="fill:${G.teams[k].color}"/>` : '').join('')}</g></g>`;
     });
-    return `<div class="map">${tiles.join('')}</div><div class="legend"><span>Number = electoral votes</span><span>Coloured numbers = influence points of each team</span><span>Hover or long-press a state for details</span></div>`;
+    return out + '</svg>';
+  }
+  function board() {
+    const T = G.teams;
+    const bars = T.map((t, i) => { const e = evOf(i); return `<div class="cand ${i === G.cur ? 'now' : ''}" style="--c:${t.color}"><span class="nm">${md(t.name)}${t.cpu ? ' 🤖' : ''}</span><span class="num">${e}</span><span class="cash">$${t.money}M</span></div>`; }).join('');
+    const seg = T.map((t, i) => `<i style="width:${evOf(i) / 538 * 100}%;background:${t.color}"></i>`).join('');
+    return `<div class="board">${bars}</div><div class="bar270"><div class="fillx">${seg}</div><b style="left:${270 / 538 * 100}%"></b><span style="left:${270 / 538 * 100}%">270 to win</span></div>`;
+  }
+  function ticker() { const t = G.ticker.join('   ●   '); return `<div class="ticker"><b>Latest</b><div><span>${t}   ●   ${t}</span></div></div>`; }
+  function stateInfo() {
+    if (!sel) return `<p class="tip">Tap a state on the map to see who leads there and what you need to win it.</p>`;
+    const c = sel, v = G.infl[c], o = owner(c), T = G.teams[G.cur], can = G.turn.phase === 'camp' && (G.turn.free > 0 && (!G.turn.only || G.turn.only.includes(c)) || T.money > 0);
+    const freeHere = G.turn.free > 0 && (!G.turn.only || G.turn.only.includes(c));
+    return `<div class="sinfo"><div class="sh"><b>${NAME[c]}</b><span>${EV[c]} votes</span></div>
+      <p>Needs <b>${THR(c)}</b> rall${THR(c) > 1 ? 'ies' : 'y'} to win · ${o >= 0 ? `won by <b style="color:${G.teams[o].color}">${md(G.teams[o].name)}</b>` : 'nobody has won it yet'}</p>
+      <div class="infl">${G.teams.map((t, k) => `<span style="--c:${t.color}"><i></i>${md(t.name)}: <b>${v[k]}</b></span>`).join('')}</div>
+      ${G.turn.phase === 'camp' ? `<p class="small">${o === G.cur ? 'You hold this state. One more rally makes it safer.' : `You need <b>${need(c)}</b> more rall${need(c) > 1 ? 'ies' : 'y'} to win it.`}</p>
+      <button class="go sm" id="rally" ${can ? '' : 'disabled'}>${freeHere ? 'Free rally here' : 'Hold a rally here · $1M'}</button>` : ''}</div>`;
   }
 
-  function scoreHTML() {
-    return `<div class="card"><div class="k">Round ${Math.min(G.round, G.rounds)} of ${G.rounds} · electoral votes</div><div class="score" style="margin-top:8px">${G.teams.map((t, i) => { const e = evOf(i); return `<div class="row2"><span style="font-weight:${i === G.cur ? 800 : 500}"><span class="chip" style="background:${t.color}"></span> ${md(t.name)}</span><div class="trk"><i style="width:${Math.min(100, e / 538 * 100)}%;background:${t.color}"></i><span class="mark" style="left:${270 / 538 * 100}%"></span></div><b>${e}</b></div>`; }).join('')}</div><p class="small" style="margin-top:6px">The line marks 270 – more than half of the 538 electoral votes.</p></div>`;
-  }
-
+  // ---------- turn panels ----------
   function render() {
     const T = G.teams[G.cur], tu = G.turn;
+    const steps = ['Breaking news', 'The debate', 'On the trail'], si = tu.phase === 'event' ? 0 : tu.phase === 'camp' ? 2 : 1;
     let panel = '';
-    if (tu.phase === 'event') {
-      panel = `<div class="card"><div class="k">Campaign event</div><h4>${md(tu.ev.t)}</h4><p>${md(tu.ev.p)}</p><p class="why">${md(tu.ev.why)}</p><div class="row"><button class="btn" id="ok">OK – next: the question</button></div></div>`;
-    } else if (tu.phase === 'q' || tu.phase === 'bq') {
+    if (tu.phase === 'event') panel = `<div class="breaking"><div class="bk">Breaking news</div><h3>${md(tu.ev.t)}</h3><p>${md(tu.ev.p)}</p><p class="why">ⓘ ${md(tu.ev.why)}</p><button class="go" id="ok">Go to the debate ▸</button></div>`;
+    else if (tu.phase === 'q' || tu.phase === 'bq') {
       const q = tu.q;
-      panel = `<div class="card"><div class="k">${tu.phase === 'bq' ? 'Bonus question (TV debate)' : 'Question'} · Unit ${q.unit}</div><div class="qq">${md(q.q)}</div><div class="opts">${q.o.map((o, j) => `<button class="opt" data-j="${j}"><span class="l">${'ABCD'[j]}</span><span>${md(o)}</span></button>`).join('')}</div><div id="fb"></div><div class="row"><button class="btn" id="ok" style="display:none">Continue</button></div></div>`;
-    } else {
-      panel = `<div class="card"><div class="k">Campaign</div><h4>Spend your money</h4><p>Click a state to place 1 influence point (${tu.free > 0 ? `<b>${tu.free} free point${tu.free > 1 ? 's' : ''}</b>${tu.only ? ' in ' + tu.only.map(c => NAME[c]).join(', ') : ''} first, then ` : ''}$1M each). Money you do not spend is saved for your next turn.</p>
-      <div class="row"><button class="btn ghost sm" id="undo" ${tu.placed.length ? '' : 'disabled'}>Undo</button><button class="btn" id="end">End turn</button></div></div>`;
-    }
-    app.innerHTML = `<div class="game"><div>${mapHTML(tu.phase === 'camp')}</div><div class="side">
-      <div class="turn" style="background:${T.color}"><div class="k">Round ${G.round} of ${G.rounds} · now playing</div><b>${md(T.name)}</b><div style="display:flex;justify-content:space-between;align-items:end"><span>Campaign money</span><span class="money">$${T.money}M</span></div></div>
-      ${G.log ? `<div class="card"><p class="small">${G.log}</p></div>` : ''}
-      ${panel}${scoreHTML()}</div></div>`;
+      panel = `<div class="debate"><div class="bk blue">${tu.phase === 'bq' ? 'Bonus question · TV debate' : 'The debate'} · Unit ${q.unit}</div><h3>${md(q.q)}</h3>
+        <div class="ans">${q.o.map((o, j) => `<button class="a" data-j="${j}"><b>${'ABCD'[j]}</b>${md(o)}</button>`).join('')}</div><div id="fb"></div>
+        <button class="go" id="ok" style="display:none">${tu.bonus && tu.phase === 'q' ? 'Bonus question ▸' : 'Hit the campaign trail ▸'}</button></div>`;
+    } else panel = `<div class="trail"><div class="bk green">On the campaign trail</div>
+        <p class="big">$${T.money}M${tu.free ? ` <small>+ ${tu.free} free rall${tu.free > 1 ? 'ies' : 'y'}${tu.only ? ' in ' + tu.only.map(c => NAME[c]).join(', ') : ''}</small>` : ''}</p>
+        ${stateInfo()}
+        <p class="small">Money you don't spend is saved for your next turn.</p>
+        <div class="btns"><button class="go ghost sm" id="undo" ${tu.placed.length ? '' : 'disabled'}>↶ Undo</button><button class="go sm" id="end">End turn ▸</button></div></div>`;
+    app.innerHTML = `<div class="top"><div class="onair"><i></i> Live</div><div class="rd">Round ${G.round} / ${G.rounds}</div><div class="who" style="--c:${T.color}">${md(T.name)}'s turn</div></div>
+      ${board()}
+      <div class="main"><div class="mapw">${mapSVG(tu.phase === 'camp')}<div class="legend"><span><i class="lg own"></i>won</span><span><i class="lg lean"></i>leading, not won yet</span><span>● rallies of each team</span><span>number = electoral votes</span></div></div>
+      <div class="panel"><div class="steps">${steps.map((s, k) => `<span class="${k === si ? 'on' : k < si ? 'done' : ''}">${k + 1} ${s}</span>`).join('')}</div>${panel}</div></div>${ticker()}`;
     wire();
   }
-
+  function rally(c) {
+    const T = G.teams[G.cur], tu = G.turn; let kind;
+    if (tu.free > 0 && (!tu.only || tu.only.includes(c))) { tu.free--; kind = 'free'; }
+    else if (T.money > 0) { T.money--; kind = 'money'; } else return;
+    const before = owner(c); G.infl[c][G.cur]++; tu.placed.push([c, kind]);
+    const after = owner(c);
+    if (after === G.cur && before !== G.cur) { say(`PROJECTION: ${T.name} wins ${NAME[c]} (${EV[c]} votes)${before >= 0 ? ' – taken from ' + G.teams[before].name : ''}`); S.win(); }
+    else S.coin();
+    render();
+    const g = app.querySelector(`.h[data-c="${c}"]`); if (g) g.classList.add('pop');
+  }
   function wire() {
-    const T = G.teams[G.cur], tu = G.turn;
-    const ok = app.querySelector('#ok');
-    if (tu.phase === 'event') ok.onclick = () => { applyEvent(T); G.log = tu.lost ? `Fake news: ${md(T.name)} lost 1 point in ${NAME[tu.lost]}.` : ''; tu.phase = 'q'; tu.q = nextQ(); render(); };
+    const T = G.teams[G.cur], tu = G.turn, ok = app.querySelector('#ok');
+    if (tu.phase === 'event') ok.onclick = () => { S.click(); applyEvent(T); if (tu.lost) say(`Fake news: ${T.name} loses a rally in ${NAME[tu.lost]}`); tu.phase = 'q'; tu.q = nextQ(); render(); };
     if (tu.phase === 'q' || tu.phase === 'bq') {
-      const opts = [...app.querySelectorAll('.opt')];
+      const opts = [...app.querySelectorAll('.a')];
       opts.forEach(b => b.onclick = () => {
         if (opts[0].dataset.done) return; opts.forEach(x => { x.disabled = true; x.dataset.done = 1; });
         const j = +b.dataset.j, q = tu.q, right = j === q.a; let gain;
         opts[q.a].classList.add('ok'); if (!right) b.classList.add('bad');
-        if (tu.phase === 'q') { T.streak = right ? T.streak + 1 : 0; gain = right ? 5 + (T.streak >= 3 ? 1 : 0) : 2; }
-        else gain = right ? 3 : 0;
-        T.money += gain;
-        app.querySelector('#fb').innerHTML = `<div class="fb"><b>${right ? 'Correct!' : 'Not quite.'} +$${gain}M${right && tu.phase === 'q' && T.streak >= 3 ? ' (streak bonus!)' : ''}</b>${md(q.e)}</div>`;
-        app.querySelector('.money').textContent = '$' + T.money + 'M';
+        if (tu.phase === 'q') { T.streak = right ? T.streak + 1 : 0; gain = right ? 5 + (T.streak >= 3 ? 1 : 0) : 2; } else gain = right ? 3 : 0;
+        T.money += gain; right ? S.good() : S.bad();
+        app.querySelector('#fb').innerHTML = `<div class="fb ${right ? 'y' : 'n'}"><b>${right ? 'Correct!' : 'Not quite.'} +$${gain}M${right && tu.phase === 'q' && T.streak >= 3 ? ' · streak bonus!' : ''}</b> ${md(q.e)}</div>`;
+        app.querySelectorAll('.cand .cash')[G.cur].textContent = '$' + T.money + 'M';
         ok.style.display = ''; ok.focus();
       });
-      ok.onclick = () => { if (tu.phase === 'q' && tu.bonus) { tu.phase = 'bq'; tu.bonus = 0; tu.q = nextQ(); } else tu.phase = 'camp'; G.log = ''; render(); };
+      ok.onclick = () => { S.click(); if (tu.phase === 'q' && tu.bonus) { tu.phase = 'bq'; tu.bonus = 0; tu.q = nextQ(); } else tu.phase = 'camp'; render(); };
     }
+    app.querySelectorAll('.h').forEach(g => {
+      g.onclick = () => { sel = g.dataset.c; S.tone(520, .05, 'sine', .08); if (tu.phase === 'camp') render(); else { const p = app.querySelector('.h.sel'); if (p) p.classList.remove('sel'); g.classList.add('sel'); } };
+      g.ondblclick = () => { if (tu.phase === 'camp' && g.classList.contains('can')) rally(g.dataset.c); };
+      g.onkeydown = e => { if (e.key === 'Enter' && tu.phase === 'camp') { sel = g.dataset.c; rally(sel); } };
+    });
     if (tu.phase === 'camp') {
-      app.querySelectorAll('.st:not(:disabled)').forEach(b => b.onclick = () => {
-        const c = b.dataset.c; let kind;
-        if (tu.free > 0 && (!tu.only || tu.only.includes(c))) { tu.free--; kind = 'free'; }
-        else if (T.money > 0) { T.money--; kind = 'money'; } else return;
-        const before = owner(c);
-        G.infl[c][G.cur]++; tu.placed.push([c, kind]);
-        const after = owner(c);
-        G.log = after === G.cur && before !== G.cur ? `<b>${md(T.name)}</b> wins <b>${NAME[c]}</b> (${EV[c]} votes)!${before >= 0 ? ' Taken from ' + md(G.teams[before].name) + '.' : ''}` : '';
-        render();
-        const t = app.querySelector(`.st[data-c="${c}"]`); if (t) t.classList.add('flash');
-      });
-      app.querySelector('#undo').onclick = () => { const p = tu.placed.pop(); if (!p) return; G.infl[p[0]][G.cur]--; if (p[1] === 'free') tu.free++; else T.money++; G.log = ''; render(); };
-      app.querySelector('#end').onclick = endTurn;
+      const r = app.querySelector('#rally'); if (r) r.onclick = () => rally(sel);
+      app.querySelector('#undo').onclick = () => { const p = tu.placed.pop(); if (!p) return; G.infl[p[0]][G.cur]--; if (p[1] === 'free') tu.free++; else T.money++; render(); };
+      app.querySelector('#end').onclick = () => { S.click(); endTurn(); };
     }
   }
-
   function endTurn() {
-    G.log = '';
     if (G.teams.some((t, i) => evOf(i) >= 270)) return finish();
-    G.cur++;
-    if (G.cur >= G.teams.length) { G.cur = 0; G.round++; }
+    G.cur++; if (G.cur >= G.teams.length) { G.cur = 0; G.round++; }
     if (G.round > G.rounds) return finish();
-    turnStart();
+    sel = null; turnStart();
   }
-
   function cpuTurn() {
     const T = G.teams[G.cur], i = G.cur, tu = G.turn;
     applyEvent(T);
@@ -187,7 +215,7 @@
     const won = [];
     const cost = c => { const v = G.infl[c], mine = v[i], other = Math.max(...v.filter((_, k) => k !== i)); return Math.max(THR(c) - mine, other + 1 - mine, 0); };
     const place = (c, free) => { const before = owner(c); G.infl[c][i]++; if (!free) T.money--; if (owner(c) === i && before !== i) won.push(NAME[c]); };
-    while (tu.free > 0) { const opts = STATES.map(s => s[0]).filter(c => !tu.only || tu.only.includes(c)); const best = opts.sort((a, b) => EV[b] / Math.max(1, cost(b)) - EV[a] / Math.max(1, cost(a)))[0]; place(best, true); tu.free--; }
+    while (tu.free > 0) { const o = STATES.map(s => s[0]).filter(c => !tu.only || tu.only.includes(c)); const best = o.sort((a, b) => EV[b] / Math.max(1, cost(b)) - EV[a] / Math.max(1, cost(a)))[0]; place(best, true); tu.free--; }
     for (let guard = 0; guard < 40 && T.money > 0; guard++) {
       const cands = STATES.map(s => s[0]).filter(c => owner(c) !== i || G.infl[c][i] - Math.max(...G.infl[c].filter((_, k) => k !== i)) <= 0).map(c => [c, cost(c)]).filter(([c, k]) => k > 0 && k <= T.money);
       if (!cands.length) break;
@@ -195,25 +223,24 @@
       const [c, k] = cands[0]; for (let n = 0; n < k; n++) place(c, false);
       if (Math.random() < 0.25) break;
     }
-    G.log = `<b>Computer</b> – event: ${md(tu.ev.t)}. It answered ${right ? 'correctly' : 'wrongly'}${won.length ? ' and won ' + won.join(', ') : ''}.`;
-    tu.phase = 'cpu';
-    const T2 = T;
-    app.innerHTML = `<div class="game"><div>${mapHTML(false)}</div><div class="side"><div class="turn" style="background:${T2.color}"><div class="k">Round ${G.round} of ${G.rounds}</div><b>Computer's turn</b><div style="display:flex;justify-content:space-between"><span>Campaign money</span><span class="money">$${T2.money}M</span></div></div><div class="card"><p>${G.log}</p><div class="row"><button class="btn" id="ok">Your turn</button></div></div>${scoreHTML()}</div></div>`;
-    app.querySelector('#ok').onclick = () => { G.log = ''; endTurn(); };
+    say(`Computer: ${tu.ev.t}; answered ${right ? 'correctly' : 'wrongly'}${won.length ? '; wins ' + won.join(', ') : ''}`);
+    G.turn.phase = 'cpu';
+    app.innerHTML = `<div class="top"><div class="onair"><i></i> Live</div><div class="rd">Round ${G.round} / ${G.rounds}</div><div class="who" style="--c:${T.color}">Computer's turn</div></div>${board()}
+      <div class="main"><div class="mapw">${mapSVG(false)}</div><div class="panel"><div class="breaking"><div class="bk">Computer's campaign</div><h3>${md(tu.ev.t)}</h3><p>The computer answered ${right ? 'correctly' : 'wrongly'}${won.length ? ' and won <b>' + won.join(', ') + '</b>' : ' and campaigned in several states'}.</p><button class="go" id="ok">Your turn ▸</button></div></div></div>${ticker()}`;
+    app.querySelector('#ok').onclick = () => { S.click(); endTurn(); };
   }
-
   function finish() {
-    const res = G.teams.map((t, i) => ({ t, e: evOf(i) })).sort((a, b) => b.e - a.e);
-    const tie = res.length > 1 && res[0].e === res[1].e;
-    const w = res[0];
-    const states = i => STATES.filter(s => owner(s[0]) === i).length;
-    app.innerHTML = `<div class="game"><div>${mapHTML(false)}</div><div class="side">
-      <div class="turn" style="background:${tie ? 'var(--m)' : w.t.color}"><div class="k">Election night</div><b>${tie ? 'A tie!' : md(w.t.name) + (w.e >= 270 ? ' reaches 270 and wins the presidency!' : ' wins with the most electoral votes!')}</b></div>
-      <div class="card"><div class="k">Results</div><div class="score" style="margin-top:8px">${res.map(r => `<div class="row2"><span><span class="chip" style="background:${r.t.color}"></span> ${md(r.t.name)}</span><span class="small">${(k => k + (k === 1 ? ' state' : ' states'))(states(G.teams.indexOf(r.t)))}</span><b>${r.e}</b></div>`).join('')}</div></div>
-      <div class="card"><div class="k">Talk about it</div><p>${tie ? 'In a real election, if no candidate gets 270, the House of Representatives chooses the President.' : w.e < 270 ? 'Nobody reached 270. In a real election the House of Representatives would then choose the President.' : 'In a real election the winner needs at least 270 of the 538 electoral votes.'}</p><p class="why">Discuss: Did your team win more states or bigger states? Is it fair that the winner of a state takes all its votes? Could a team win the most states but lose the election?</p>
-      <div class="row"><button class="btn" id="again">Play again</button><a class="btn ghost" href="../" style="text-decoration:none">AAA 5 games</a></div></div></div></div>`;
+    const res = G.teams.map((t, i) => ({ t, e: evOf(i), s: STATES.filter(s => owner(s[0]) === i).length })).sort((a, b) => b.e - a.e);
+    const tie = res.length > 1 && res[0].e === res[1].e, w = res[0];
+    S.win(); setTimeout(() => S.horn(), 700);
+    app.innerHTML = `<div class="top"><div class="onair"><i></i> Live</div><div class="rd">Election night</div></div>${board()}
+      <div class="main"><div class="mapw">${mapSVG(false)}</div><div class="panel"><div class="result" style="--c:${tie ? '#8899BB' : w.t.color}">
+      <div class="bk">${tie ? 'Too close to call' : 'Projected winner'}</div><h2>${tie ? 'A tie!' : md(w.t.name)}</h2>
+      <p>${tie ? 'In a real election, if no candidate gets 270, the House of Representatives chooses the President.' : w.e >= 270 ? 'reaches 270 electoral votes and wins the presidency!' : 'has the most electoral votes – but nobody reached 270. In a real election the House of Representatives would choose the President.'}</p>
+      <table>${res.map(r => `<tr><td><i style="background:${r.t.color}"></i>${md(r.t.name)}</td><td>${r.s} state${r.s === 1 ? '' : 's'}</td><td><b>${r.e}</b></td></tr>`).join('')}</table>
+      <p class="why">Talk about it: Did you win the most states or the biggest ones? Why do candidates spend so much time in swing states? Is “winner takes all” fair?</p>
+      <div class="btns"><button class="go" id="again">Play again</button><a class="go ghost" href="../">AAA 5 games</a></div></div></div></div>`;
     app.querySelector('#again').onclick = setup;
   }
-
   setup();
 })();
