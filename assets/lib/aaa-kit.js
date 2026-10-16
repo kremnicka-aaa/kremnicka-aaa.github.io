@@ -47,7 +47,7 @@ K.button = (scene, x, y, label, fn, w = 220, ghost, col = 0x8E1F2C) => {
   const c = scene.add.container(x, y).setDepth(60); const g = scene.add.graphics();
   const draw = hov => { g.clear(); g.fillStyle(0x000000, .35); g.fillRoundedRect(-w / 2, -23, w, 56, 8); g.fillStyle(ghost ? 0xF3E6C8 : (hov ? Phaser.Display.Color.ValueToColor(col).lighten(12).color : col), 1); g.fillRoundedRect(-w / 2, -28, w, 56, 8); g.lineStyle(3, 0x2A2018, 1); g.strokeRoundedRect(-w / 2, -28, w, 56, 8); };
   draw(); const t = scene.add.text(0, 0, label, { fontFamily: 'Inter, sans-serif', fontStyle: '800', fontSize: '22px', color: ghost ? '#2A2018' : '#FFFFFF' }).setOrigin(.5);
-  c.add([g, t]); c.setSize(w, 56).setInteractive({ useHandCursor: true }).on('pointerover', () => draw(1)).on('pointerout', () => draw(0)).on('pointerdown', (p, lx, ly, ev) => { if (ev) ev.stopPropagation(); K.SND.init(); K.SND.click(); fn(); });
+  c.add([g, t]); c.setSize(w, 56).setInteractive({ useHandCursor: true }).on('pointerover', () => draw(1)).on('pointerout', () => draw(0)).on('pointerdown', (p, lx, ly, ev) => { if (ev) ev.stopPropagation(); if (K.ov().classList.contains('on')) return; K.SND.init(); K.SND.click(); fn(); });
   return c;
 };
 K.chip = (scene, x, y, label, fn, originX = 1, originY = 0) => { const t = scene.add.text(x, y, label, { fontFamily: 'Inter, sans-serif', fontStyle: '700', fontSize: '16px', color: '#F3E6C8', backgroundColor: 'rgba(0,0,0,.4)', padding: { x: 10, y: 6 } }).setOrigin(originX, originY).setInteractive({ useHandCursor: true }).setDepth(70);
@@ -59,7 +59,7 @@ K.corner = (scene, bottom, extra, x0) => { // sound + full screen (+ optional ex
   if (extra) K.chip(scene, x, y, extra[0], extra[1], 1, oy);
 };
 K.game = (scenes, opts = {}) => {
-  const g = new Phaser.Game(Object.assign({ type: /webgl/.test(location.search) ? Phaser.AUTO : Phaser.CANVAS, parent: 'game', width: W, height: H, backgroundColor: '#15110D', scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH, fullscreenTarget: 'stage' }, scene: scenes }, opts));
+  const g = window.__game = new Phaser.Game(Object.assign({ type: /webgl/.test(location.search) ? Phaser.AUTO : Phaser.CANVAS, parent: 'game', width: W, height: H, backgroundColor: '#15110D', scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH, fullscreenTarget: 'stage' }, input: { windowEvents: false }, scene: scenes }, opts));
   const refit = () => [50, 300, 800].forEach(t => setTimeout(() => g.scale && g.scale.refresh(), t));
   window.addEventListener('orientationchange', refit); window.addEventListener('resize', refit); if (window.visualViewport) window.visualViewport.addEventListener('resize', refit);
   return g;

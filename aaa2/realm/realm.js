@@ -459,7 +459,7 @@ class Battle extends Phaser.Scene {
   }
 }
 
-const GAME = window.__realm = new Phaser.Game({ type: /webgl/.test(location.search) ? Phaser.AUTO : Phaser.CANVAS, parent: 'game', width: W, height: H, backgroundColor: '#15110D', scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH, fullscreenTarget: 'stage' }, scene: [Boot, Title, Battle], render: { antialias: true } });
+const GAME = window.__realm = new Phaser.Game({ type: /webgl/.test(location.search) ? Phaser.AUTO : Phaser.CANVAS, parent: 'game', width: W, height: H, backgroundColor: '#15110D', scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH, fullscreenTarget: 'stage' }, input: { windowEvents: false }, scene: [Boot, Title, Battle], render: { antialias: true } });
 // iPhone/iPad: re-measure after rotation and when the browser bars appear or disappear
 const refit = () => { [50, 300, 800].forEach(t => setTimeout(() => GAME.scale && GAME.scale.refresh(), t)); };
 window.addEventListener('orientationchange', refit); window.addEventListener('resize', refit); if (window.visualViewport) window.visualViewport.addEventListener('resize', refit);
