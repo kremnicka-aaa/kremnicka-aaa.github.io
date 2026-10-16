@@ -15,7 +15,8 @@
     app.querySelectorAll('.unit').forEach(b => b.onclick = () => start(b.dataset.u));
   }
   function start(u) {
-    const pool = u === 'all' ? D.units.flatMap(x => x.q.map(q => Object.assign({ unit: x.n }, q))) : D.units.find(x => String(x.n) === String(u)).q.map(q => Object.assign({ unit: +u }, q));
+    const want = u === 'all' ? D.units.map(x => String(x.n)) : String(u).split(',');
+    const pool = D.units.filter(x => want.includes(String(x.n))).flatMap(x => x.q.map(q => Object.assign({ unit: x.n }, q)));
     const qs = shuffle(pool).slice(0, PER).map(q => { const idx = shuffle([0, 1, 2, 3]); return Object.assign({}, q, { o: idx.map(i => q.o[i]), a: idx.indexOf(q.a) }); });
     S = { u, qs, i: 0, score: 0, streak: 0, best: 0, joker: true, wrong: [] };
     history.replaceState(null, '', '?u=' + u);
@@ -45,7 +46,7 @@
   }
   function result() {
     const r = Math.min(RANKS.length - 1, Math.floor(S.score / S.qs.length * (RANKS.length - 1) + 0.0001));
-    app.innerHTML = `<div class="result"><div class="qn" style="font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--m2)">${S.u === 'all' ? 'Whole year' : 'Unit ' + S.u}</div>
+    app.innerHTML = `<div class="result"><div class="qn" style="font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--m2)">${S.u === 'all' ? 'Whole year' : (String(S.u).includes(',') ? 'Units ' : 'Unit ') + String(S.u).replace(',', ' + ')}</div>
     <div class="score">${S.score} / ${S.qs.length}</div><div class="rank">You are a ${RANKS[r]}!</div><p class="lead" style="margin:0">Best streak: ${S.best}</p>
     <div class="ladder">${RANKS.map((x, k) => `<span class="${k === r ? 'on' : ''}">${x}</span>`).join('')}</div>
     <div class="row" style="justify-content:center"><button class="btn" id="again">Play again</button><button class="btn ghost" id="home">Choose another unit</button></div>
@@ -59,5 +60,5 @@
     if (e.key === 'Enter') { const n = app.querySelector('#next'); if (n && n.style.display !== 'none' && document.activeElement !== n) n.click(); }
   });
   const u = new URLSearchParams(location.search).get('u');
-  if (u && (u === 'all' || D.units.some(x => String(x.n) === u))) start(u); else home();
+  if (u && (u === 'all' || u.split(',').every(v => D.units.some(x => String(x.n) === v)))) start(u); else home();
 })();
