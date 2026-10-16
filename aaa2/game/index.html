@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Crown</title>
+<meta name="description" content="AAA 2 game: rule England from Alfred the Great to Queen Victoria. Every decision has consequences.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/quiz.css">
+<style>
+.wrap{max-width:560px}
+.meters{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.mt{text-align:center;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.mt .tube{height:64px;width:34px;margin:6px auto 4px;border-radius:9px;background:var(--line);position:relative;overflow:hidden}
+.mt .tube i{position:absolute;left:0;right:0;bottom:0;background:var(--m);transition:height .5s}
+.mt .tube i.warn{background:var(--bad)}
+.mt .dot{height:10px;display:flex;justify-content:center}.mt .dot b{width:8px;height:8px;border-radius:50%;background:var(--gold);transition:transform .15s;transform:scale(0)}
+.mt .dot b.s{transform:scale(.7)}.mt .dot b.l{transform:scale(1.25)}
+.era{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--muted);margin-bottom:8px}
+.era b{font-family:"Source Serif 4",Georgia,serif;font-size:20px;color:var(--ink)}
+.ccard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 18px;touch-action:pan-y;user-select:none;transition:transform .25s,opacity .25s;position:relative}
+.ccard .who{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--m2)}
+.ccard p.txt{font-family:"Source Serif 4",Georgia,serif;font-size:19px;line-height:1.4;margin:8px 0 14px}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.choice{font:inherit;font-weight:700;text-align:left;background:var(--bg);color:var(--ink);border:2px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;min-height:64px}
+.choice:hover,.choice:focus-visible{border-color:var(--m);outline:none}
+.choice small{display:block;font-weight:600;color:var(--muted);font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px}
+.hint{font-size:12.5px;color:var(--muted);text-align:center;margin-top:10px}
+.hist{margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--tint);font-size:15px}
+.hist b{display:block;margin-bottom:3px}
+.reign{font-size:13px;color:var(--muted);margin-top:14px}
+.timeline{display:flex;gap:3px;margin:8px 0 2px}.timeline span{flex:1;height:6px;border-radius:99px;background:var(--line)}.timeline span.done{background:var(--gold)}.timeline span.here{background:var(--m)}
+</style>
+</head><body><div class="wrap">
+<header class="top"><a class="brand" href="../"><span class="badge">AAA 2</span><span><small>Kremnická 26 · Bratislava · game</small><b>The Crown</b></span></a></header>
+<main id="app"></main>
+<footer>English and American Literature and Culture · Year 2 · No sign-in, no data collected.</footer>
+</div>
+<script src="cards.js"></script><script src="game.js"></script>
+</body></html>
