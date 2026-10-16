@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="theme-color" content="#2A1C10">
+<title>The Oregon Trail · 1848</title>
+<meta name="description" content="AAA 4 game: lead a family from Missouri to Oregon in 1848. Buy supplies, cross rivers, meet the people of the plains and survive the journey.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Rye&family=IM+Fell+English:ital@0;1&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/lib/aaa-game.css">
+<style>
+:root{--ink:#2A1C10;--parch:#EAD9B5;--red:#8A2A1A;--gold:#B8862E;--green:#4E6B2E}
+html,body{background:#2A1C10}
+.sheet{background:#EAD9B5;background-image:radial-gradient(ellipse at 30% 10%,rgba(255,250,235,.7),transparent 60%),radial-gradient(ellipse at 80% 90%,rgba(120,80,30,.25),transparent 60%),repeating-linear-gradient(0deg,rgba(90,60,20,.04) 0 2px,transparent 2px 5px);box-shadow:0 0 0 2px #5A3A1A,0 0 0 9px #2A1C10,0 0 0 11px #B8862E,0 24px 60px rgba(0,0,0,.6);border-radius:2px}
+.sheet h2{font-family:Rye,serif;font-weight:400;letter-spacing:.02em}
+.sheet p{font-family:"IM Fell English",Georgia,serif;font-size:clamp(15px,1.55vw,19px)}
+.sheet .kick{color:#8A2A1A}
+.btn{background:#8A2A1A;box-shadow:0 3px 0 #4A140A;font-family:Inter}
+.store{display:grid;gap:8px;margin:8px 0}
+.it{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:center;background:rgba(255,250,235,.6);border:1.5px solid #8A6A3A;border-radius:4px;padding:6px 10px}
+.it b{font-family:Rye,serif;font-weight:400;font-size:clamp(14px,1.4vw,17px)}.it small{display:block;font-size:12px;color:#5A4A30}
+.it button{font:800 18px Inter;width:36px;height:36px;border-radius:4px;border:2px solid #2A1C10;background:#F5E8C8;cursor:pointer}
+.it .n{min-width:46px;text-align:center;font:800 16px Inter}
+.money{font-family:Rye,serif;font-size:clamp(18px,2vw,26px)}
+.fam{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}.fam input{font:600 14px Inter;width:100%;padding:6px;border:1.5px solid #8A6A3A;border-radius:4px;background:#FFF8E6}
+.choices{display:grid;gap:8px;margin-top:8px}.choice{font:600 clamp(13px,1.35vw,16px) Inter;text-align:left;background:#F5E8C8;border:2px solid #8A6A3A;border-radius:4px;padding:10px 12px;cursor:pointer;color:#2A1C10}.choice:hover{border-color:#2A1C10}.choice small{display:block;font-weight:500;color:#5A4A30}
+.fact{border-left:4px solid #B8862E;background:rgba(184,134,46,.15);padding:8px 12px;margin:8px 0;font-family:"IM Fell English",Georgia,serif;font-size:clamp(14px,1.4vw,17px)}
+@media (max-width:640px){.fam{grid-template-columns:1fr 1fr}}
+</style>
+</head><body>
+<div id="wrap"><div id="stage"><div id="game"></div><div id="ov"></div></div></div>
+<div id="rot"><div><div style="font:400 30px Rye,serif;margin-bottom:10px">The Oregon Trail</div>Turn your phone sideways to play.</div></div>
+<script src="../../assets/lib/phaser-3.90.0.min.js"></script><script src="../../assets/lib/aaa-kit.js"></script><script src="../questions.js"></script><script src="trail.js"></script>
+</body></html>
