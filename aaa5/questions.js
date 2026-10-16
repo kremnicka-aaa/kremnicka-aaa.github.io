@@ -19,13 +19,13 @@ window.AAA = {
     { n: 2, name: 'The Beats and Modern Fiction', q: [
       { q: 'Kerouac called his fast, unplanned way of writing …', o: ['stream of consciousness', 'spontaneous prose', 'free verse', 'the iceberg theory'], a: 1, e: 'He compared it to a jazz solo.' },
       { q: 'Dean Moriarty in *On the Road* is based on …', o: ['Allen Ginsberg', 'Neal Cassady', 'William Burroughs', 'Kerouac himself'], a: 1, e: 'Sal Paradise is Kerouac.' },
-      { q: '“I saw the best minds of my generation destroyed by madness” opens …', o: ['*Howl*', '*On the Road*', '*Leaves of Grass*', '*The Waste Land*'], a: 0, e: 'Allen Ginsberg, 1956.' },
+      { q: 'Which long poem was first read at the Six Gallery in San Francisco in 1955?', o: ['*Howl*', '*On the Road*', '*Leaves of Grass*', '*The Waste Land*'], a: 0, e: 'Allen Ginsberg, published 1956.' },
       { q: 'In 1957 *Howl* was …', o: ['banned forever', 'put on trial and found not obscene', 'awarded the Nobel Prize', 'made into a film'], a: 1, e: 'A victory for freedom of speech.' },
       { q: 'What does Pecola Breedlove pray for?', o: ['money', 'blue eyes', 'a new family', 'a dog'], a: 1, e: '*The Bluest Eye* (1970).' },
       { q: 'Toni Morrison won the Nobel Prize in Literature in …', o: ['1970', '1988', '1993', '2016'], a: 2, e: 'The first African American woman to win it.' },
       { q: 'The narrator of *Sophie\'s Choice* is …', o: ['Nathan', 'Stingo', 'Sophie', 'Sal'], a: 1, e: 'A young Southern writer in Brooklyn, 1947.' },
       { q: '*The Hours* is connected with the novel …', o: ['*Mrs Dalloway*', '*Jane Eyre*', '*Ulysses*', '*1984*'], a: 0, e: 'Woolf\'s working title was “The Hours”.' },
-      { q: 'In *The Gift of the Magi*, Della sells …', o: ['her watch', 'her hair', 'her ring', 'her books'], a: 1, e: 'Jim sells his watch to buy her combs.' },
+      { q: 'Sophie\'s terrible secret is connected with …', o: ['Auschwitz', 'Brooklyn', 'the Vietnam War', 'Hollywood'], a: 0, e: 'William Styron, *Sophie\'s Choice* (1979).' },
       { q: 'Which novel is about the absurdity of war?', o: ['*Catch-22*', '*Invisible Man*', '*The Bell Jar*', '*To Kill a Mockingbird*'], a: 0, e: 'Joseph Heller, 1961.' }
     ]},
     { n: 3, name: 'How the USA Is Governed', q: [

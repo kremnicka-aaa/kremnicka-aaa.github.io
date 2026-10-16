@@ -53,13 +53,13 @@ window.AAA = {
     ]},
     { n: 5, name: '20th-Century American Literature', q: [
       { q: '“You are all a lost generation” – who said it to Hemingway?', o: ['Gertrude Stein', 'Zelda Fitzgerald', 'T. S. Eliot', 'Ezra Pound'], a: 0, e: 'The motto of *The Sun Also Rises* (1926).' },
-      { q: 'The first line of *The Waste Land* is …', o: ['“April is the cruellest month”', '“Call me Ishmael”', '“Once upon a midnight dreary”', '“I celebrate myself”'], a: 0, e: 'T. S. Eliot, 1922.' },
+      { q: 'In *The Waste Land*, which month is “the cruellest”?', o: ['April', 'December', 'August', 'November'], a: 0, e: 'T. S. Eliot, 1922 – the opposite of Chaucer\'s happy April.' },
       { q: 'Hemingway\'s “iceberg theory” means …', o: ['write long descriptions', 'leave out much and let the reader feel it', 'write about the Arctic', 'use many adjectives'], a: 1, e: 'Seven-eighths of the iceberg are under water.' },
       { q: 'What does the green light symbolise in *The Great Gatsby*?', o: ['money only', 'Gatsby\'s dream (Daisy, the past, the American Dream)', 'danger', 'the police'], a: 1, e: '“So we beat on, boats against the current …”' },
       { q: 'Who coined the term “the Jazz Age”?', o: ['Hemingway', 'F. Scott Fitzgerald', 'Steinbeck', 'Faulkner'], a: 1, e: 'Fitzgerald (1896–1940).' },
       { q: '*A Rose for Emily* is an example of …', o: ['Southern Gothic', 'Transcendentalism', 'the Harlem Renaissance', 'science fiction'], a: 0, e: 'William Faulkner, 1930.' },
       { q: 'The Joads drive to California on …', o: ['Route 66', 'the Oregon Trail', 'Broadway', 'the Mississippi'], a: 0, e: '*The Grapes of Wrath* (1939).' },
-      { q: '“I have always depended on the kindness of strangers” – who says it?', o: ['Blanche DuBois', 'Daisy Buchanan', 'Ma Joad', 'Holden Caulfield'], a: 0, e: '*A Streetcar Named Desire* (1947).' },
+      { q: 'Who is taken to a psychiatric hospital at the end of *A Streetcar Named Desire*?', o: ['Blanche DuBois', 'Stella', 'Stanley Kowalski', 'Mitch'], a: 0, e: 'Tennessee Williams, 1947.' },
       { q: 'Holden Caulfield hates people who are …', o: ['phony', 'poor', 'young', 'quiet'], a: 0, e: '*The Catcher in the Rye* (1951).' }
     ]}
   ]
