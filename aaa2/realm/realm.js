@@ -257,7 +257,10 @@ function button(scene, x, y, label, fn, w = 220, ghost) {
   c.add([g, t]); c.setSize(w, 56).setInteractive({ useHandCursor: true }).on('pointerover', () => draw(1)).on('pointerout', () => draw(0)).on('pointerdown', () => { SND.init(); SND.place(); fn(); });
   return c;
 }
-function soundBtn(scene, bottom) { const t = scene.add.text(W - 24, bottom ? H - 12 : 22, SND.on ? '♪ sound on' : '♪ sound off', { fontFamily: 'Inter', fontStyle: '700', fontSize: '16px', color: '#F3E6C8', backgroundColor: 'rgba(0,0,0,.35)', padding: { x: 10, y: 6 } }).setOrigin(1, bottom ? 1 : 0).setInteractive({ useHandCursor: true }).setDepth(50);
+function fullBtn(scene, bottom) { const sc = scene.scale; if (!sc.fullscreen.available) return null;
+  const t = scene.add.text(bottom ? W - 290 : W - 170, bottom ? H - 12 : 22, '⛶ full screen', { fontFamily: 'Inter', fontStyle: '700', fontSize: '16px', color: '#F3E6C8', backgroundColor: 'rgba(0,0,0,.35)', padding: { x: 10, y: 6 } }).setOrigin(1, bottom ? 1 : 0).setInteractive({ useHandCursor: true }).setDepth(50);
+  t.on('pointerup', (p, lx, ly, ev) => { if (ev) ev.stopPropagation(); if (sc.isFullscreen) sc.stopFullscreen(); else sc.startFullscreen(); }); return t; }
+function soundBtn(scene, bottom) { fullBtn(scene, bottom); const t = scene.add.text(W - 24, bottom ? H - 12 : 22, SND.on ? '♪ sound on' : '♪ sound off', { fontFamily: 'Inter', fontStyle: '700', fontSize: '16px', color: '#F3E6C8', backgroundColor: 'rgba(0,0,0,.35)', padding: { x: 10, y: 6 } }).setOrigin(1, bottom ? 1 : 0).setInteractive({ useHandCursor: true }).setDepth(50);
   t.on('pointerdown', () => { SND.init(); t.setText(SND.toggle() ? '♪ sound on' : '♪ sound off'); }); return t; }
 function howTo(done) {
   show(`<div class="sheet"><div class="kick">How to play</div><h2>Defend the Realm</h2>
@@ -456,5 +459,8 @@ class Battle extends Phaser.Scene {
   }
 }
 
-window.__realm = new Phaser.Game({ type: /webgl/.test(location.search) ? Phaser.AUTO : Phaser.CANVAS, parent: 'game', width: W, height: H, backgroundColor: '#15110D', scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH }, scene: [Boot, Title, Battle], render: { antialias: true } });
+const GAME = window.__realm = new Phaser.Game({ type: /webgl/.test(location.search) ? Phaser.AUTO : Phaser.CANVAS, parent: 'game', width: W, height: H, backgroundColor: '#15110D', scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH, fullscreenTarget: 'stage' }, scene: [Boot, Title, Battle], render: { antialias: true } });
+// iPhone/iPad: re-measure after rotation and when the browser bars appear or disappear
+const refit = () => { [50, 300, 800].forEach(t => setTimeout(() => GAME.scale && GAME.scale.refresh(), t)); };
+window.addEventListener('orientationchange', refit); window.addEventListener('resize', refit); if (window.visualViewport) window.visualViewport.addEventListener('resize', refit);
 })();
